@@ -6,8 +6,8 @@
 #include <inttypes.h>
 
 struct context {
-	g_autoptr(GError) error;
-	g_autoptr(GKeyFile) key_file;
+	GError * error;
+	GKeyFile * key_file;
 };
 
 struct context initContext(){
@@ -17,7 +17,7 @@ struct context initContext(){
 	return contxt;
 }
 
-
+int getBatAtr(char ** outP, char * atr, struct context contxt);
 int getBatAtr(char ** outP, char * atr, struct context contxt){
 	
 	g_autofree gchar * val = g_key_file_get_string (contxt.key_file, "Battery", atr, &contxt.error);
@@ -64,6 +64,7 @@ int main(){
 
 	//free(lowP);//TODO goto for freedom
 	//free(path);
+	//free context
 	return 0;
 }
 
