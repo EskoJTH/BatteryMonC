@@ -1,36 +1,70 @@
 #include <glib.h>
 #include <glib/gprintf.h>
 #include <stdio.h>
+#include <string.h>
+#include <err.h>
+#include <inttypes.h>
+
+struct context {
+	g_autoptr(GError) error;
+	g_autoptr(GKeyFile) key_file;
+};
+
+struct context initContext(){
+	struct context contxt;
+	contxt.error = NULL;
+	contxt.key_file = g_key_file_new ();
+	return contxt;
+}
+
+
+int getBatAtr(char ** outP, char * atr, struct context contxt){
+	
+	g_autofree gchar * val = g_key_file_get_string (contxt.key_file, "Battery", atr, &contxt.error);
+	if (val == NULL &&
+	    !g_error_matches (contxt.error, G_KEY_FILE_ERROR, G_KEY_FILE_ERROR_KEY_NOT_FOUND))
+	{
+		g_warning ("Error finding key in key file: %s", contxt.error->message);
+		errx(1, "asdasd");
+	}
+	else if (atr == NULL)
+	{
+		// Fall back to a default value.
+		atr = g_strdup ("default-value");
+	}
+	outP = realloc(val, strlen(val));
+	return 1;
+}
 
 
 int main(){
-	g_autoptr(GError) error = NULL;
-	g_autoptr(GKeyFile) key_file = g_key_file_new ();
-
-	if (!g_key_file_load_from_file (key_file, "key-file.ini", G_KEY_FILE_NONE, &error))
+	struct context contxt = initContext();
+	
+	if (!g_key_file_load_from_file (contxt.key_file, "batterymon.ini", G_KEY_FILE_NONE, &contxt.error))
 	{
-		if (!g_error_matches (error, G_FILE_ERROR, G_FILE_ERROR_NOENT))
-			g_warning ("Error loading key file: %s", error->message);
+		if (!g_error_matches (contxt.error, G_FILE_ERROR, G_FILE_ERROR_NOENT))
+			g_warning ("Error loading key file: %s", contxt.error->message);
 		return 0;
 	}
+	char * lowP;
+	char * path;
+	getBatAtr(&lowP, "low", contxt);
+	getBatAtr(&path, "path", contxt);
+	int low = strtoimax(lowP, NULL, 10);
 
-	g_autofree gchar *val = g_key_file_get_string (key_file, "Group Name", "SomeKey", &error);
-	if (val == NULL &&
-	    !g_error_matches (error, G_KEY_FILE_ERROR, G_KEY_FILE_ERROR_KEY_NOT_FOUND))
-	{
-		g_warning ("Error finding key in key file: %s", error->message);
-		return 0;
-	}
-	else if (val == NULL)
-	{
-		// Fall back to a default value.
-		val = g_strdup ("default-value");
-	}
+	/* if (lowP == NULL) { */
+	/* 	errx(); */
+	/* } */
+	/* if (path == NULL) { */
+	/* 	errx(); */
+	/* } */
 
-	printf ("outval: %s\n", val);
+	printf ("low: %d\n", low);
+	printf ("path: %s\n", path);
+
+	//free(lowP);//TODO goto for freedom
+	//free(path);
 	return 0;
-  
 }
-
 
 

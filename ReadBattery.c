@@ -5,7 +5,7 @@
 #include <string.h>
 
 int getBattery(){
-  const char * batteryStatePath =  "/sys/class/power_supply/BAT0/capacity";
+  const char * batteryStatePath = "/sys/class/power_supply/BAT0/capacity";
   FILE * batteryStateFile = fopen(batteryStatePath, "rb");
   // char buf[MAXLINE];
   char * line;
