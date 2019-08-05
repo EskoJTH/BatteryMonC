@@ -17,10 +17,11 @@ struct context initContext(){
 	return contxt;
 }
 
-int getBatAtr(char ** outP, char * atr, struct context contxt);
-int getBatAtr(char ** outP, char * atr, struct context contxt){
-	
-	g_autofree gchar * val = g_key_file_get_string (contxt.key_file, "Battery", atr, &contxt.error);
+
+
+char * getBatAtr(char* atr, struct context contxt);
+char * getBatAtr(char * atr, struct context contxt){
+        g_autofree gchar * val = g_key_file_get_string (contxt.key_file, "Battery", atr, &contxt.error);
 	if (val == NULL &&
 	    !g_error_matches (contxt.error, G_KEY_FILE_ERROR, G_KEY_FILE_ERROR_KEY_NOT_FOUND))
 	{
@@ -32,8 +33,10 @@ int getBatAtr(char ** outP, char * atr, struct context contxt){
 		// Fall back to a default value.
 		atr = g_strdup ("default-value");
 	}
-	outP = realloc(val, strlen(val));
-	return 1;
+	//outP = realloc(val, strlen(val));
+	//*outP = val;
+	
+	return val;
 }
 
 
@@ -46,10 +49,10 @@ int main(){
 			g_warning ("Error loading key file: %s", contxt.error->message);
 		return 0;
 	}
-	char * lowP;
-	char * path;
-	getBatAtr(&lowP, "low", contxt);
-	getBatAtr(&path, "path", contxt);
+	char * lowP = NULL;
+	char * path = NULL;
+	lowP = getBatAtr("low", contxt);
+	path = getBatAtr("path", contxt);
 	int low = strtoimax(lowP, NULL, 10);
 
 	/* if (lowP == NULL) { */
@@ -59,7 +62,7 @@ int main(){
 	/* 	errx(); */
 	/* } */
 
-	printf ("low: %d\n", low);
+	printf ("low: %s\n", lowP);
 	printf ("path: %s\n", path);
 
 	//free(lowP);//TODO goto for freedom
