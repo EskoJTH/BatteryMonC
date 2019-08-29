@@ -6,13 +6,13 @@
 
 struct configs {
   int battery;
-}
+};
 
-  struct configs initConfigs(){
-    struct configs conffit;
-    conffit.battery = -1;
-    return conffit;
-  }
+struct configs initConfigs(){
+  struct configs conffit;
+  conffit.battery = -1;
+  return conffit;
+}
 
 
 struct configs readConfig (char * confpath){

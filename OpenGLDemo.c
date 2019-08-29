@@ -50,55 +50,56 @@ void output(GLfloat x, GLfloat y, char *text)
 // change a window's _NET_WM_STATE property so that it can be kept on top.
 // @display: x11 display singleton.
 // @xid    : the window to set on top.
-Status x11_window_set_on_top (Display* display, Window xid)
-{
+/* Status x11_window_set_on_top (Display* display, Window xid) */
+/* { */
 
 
   
-  XEvent event;
-  event.xclient.type = ClientMessage;
-  event.xclient.serial = 0;
-  event.xclient.send_event = True;
-  event.xclient.display = display;
-  event.xclient.window  = xid;
-  event.xclient.message_type = XInternAtom (display, "_NET_WM_STATE", False);
-  event.xclient.format = 32;
-  event.xclient.data.l[0] = _NET_WM_STATE_ADD;
-  event.xclient.data.l[1] = XInternAtom (display, "_NET_WM_STATE_ABOVE", False);
-  event.xclient.data.l[2] = 0; //unused.
-  event.xclient.data.l[3] = 0;
-  event.xclient.data.l[4] = 0;
+/*   XEvent event; */
+/*   event.xclient.type = ClientMessage; */
+/*   event.xclient.serial = 0; */
+/*   event.xclient.send_event = True; */
+/*   event.xclient.display = display; */
+/*   event.xclient.window  = xid; */
+/*   event.xclient.message_type = XInternAtom (display, "_NET_WM_STATE", False); */
+/*   event.xclient.format = 32; */
+/*   event.xclient.data.l[0] = _NET_WM_STATE_ADD; */
+/*   event.xclient.data.l[1] = XInternAtom (display, "_NET_WM_STATE_ABOVE", False); */
+/*   event.xclient.data.l[2] = 0; //unused. */
+/*   event.xclient.data.l[3] = 0; */
+/*   event.xclient.data.l[4] = 0; */
 
   
 
   //Borderless
   //override redirect
     
-  return XSendEvent (display, DefaultRootWindow(display), False,
-		     SubstructureRedirectMask|SubstructureNotifyMask, &event);
-}
-n
+/*   return XSendEvent (display, DefaultRootWindow(display), False, */
+/* 		     SubstructureRedirectMask|SubstructureNotifyMask, &event); */
+/* } */
+
 // a sample main function for testing.
 // shell> ./a.out window_xid
-int helper (int argc, char** argv)
-{
-    Window xid = strtol (argv[1], NULL, 0); 
-    Display* display = XOpenDisplay (NULL);
+/* int helper (int argc, char** argv) */
+/* { */
+  
+/*     Window xid = strtol (argv[1], NULL, 0);  */
+/*     Display* display = XOpenDisplay (NULL); */
 
-    x11_window_set_on_top (display, xid);
+/*     x11_window_set_on_top (display, xid); */
 
-    XFlush (display); //for simplicity, no event loops here.
+/*     XFlush (display); //for simplicity, no event loops here. */
 
-    XCloseDisplay (display);
-}
-
-
-
+/*     XCloseDisplay (display); */
+/* } */
 
 
 
 
-void display(int battery)
+
+
+
+void display(void)
 {
   static GLfloat amb[] = {0.4, 0.4, 0.4, 0.0};
   static GLfloat dif[] = {1.0, 1.0, 1.0, 0.0};
@@ -144,7 +145,7 @@ void display(int battery)
   //output(200, 225, "This is antialiased.");
   glDisable(GL_LINE_SMOOTH);
   glDisable(GL_BLEND);
-  char * outString = "Battery low: " + battery;
+  char * outString = "BATTERY LOW";
   output(200, 225, outString);
   glPopMatrix();
   glMatrixMode(GL_PROJECTION);
@@ -171,7 +172,7 @@ void visible(int vis)
     glutIdleFunc(NULL);
 }
 
-int drawWarn(int argc, char **argv, int battery)
+int drawWarn(int argc, char **argv)
 {
   //sleep(7);
 
